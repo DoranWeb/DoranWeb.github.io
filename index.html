@@ -1,1 +1,39 @@
-n
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘의 점심 메뉴</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <h1 class="text-2xl font-bold mb-4">오늘의 점심 메뉴</h1>
+    <div id="lunch-menu" class="bg-white shadow-md rounded p-4">
+        <!-- 점심 메뉴가 여기에 표시됩니다. -->
+    </div>
+
+    <script>
+        async function fetchLunchMenu() {
+            try {
+                const response = await fetch('https://www.ut.ac.kr/prog/mealManage/MT01/kor/sub06_02_02_01/list.do');
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+
+                // 메뉴 정보를 선택합니다. (여기에서 'menu_info' 대신 정확한 클래스를 확인하여 수정하세요)
+                const menuDiv = doc.querySelector('.menu_info'); // 해당 요소를 확인 후 수정
+                const menuItems = menuDiv ? menuDiv.innerHTML.trim() : '메뉴 정보가 없습니다.';
+                
+                // HTML에 메뉴 항목을 추가합니다.
+                document.getElementById('lunch-menu').innerHTML = menuItems.replace(/<br>/g, '<br class="my-1">'); // 줄 바꿈 추가
+            } catch (error) {
+                console.error('메뉴를 가져오는 데 오류가 발생했습니다:', error);
+                document.getElementById('lunch-menu').innerHTML = '메뉴를 가져올 수 없습니다.';
+            }
+        }
+
+        // 페이지가 로드될 때 메뉴를 가져옵니다.
+        window.onload = fetchLunchMenu;
+    </script>
+</body>
+</html>
